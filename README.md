@@ -36,9 +36,7 @@ every claude conversation gets a structured collection of your reactions, questi
 
 ☕ [buy me a coffee](https://ko-fi.com/apollineproduction)
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## what it does
 
@@ -53,9 +51,7 @@ screenshots go here — add images to a screenshots/ folder and reference like:
 ![sidebar](screenshots/sidebar.png)
 -->
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## features
 
@@ -99,9 +95,7 @@ when you're done with an annotation, resolve it. it disappears from your local v
 ### tags
 add freeform tags to any annotation. recent tags are suggested when you create new annotations.
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## install (chrome)
 
@@ -125,9 +119,7 @@ add freeform tags to any annotation. recent tags are suggested when you create n
 
 4. navigate to any `claude.ai/chat/*` page — the extension activates automatically
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## settings
 
@@ -162,9 +154,7 @@ in the annotation popup, there's a toggle for "pin to notion". when turned on, e
 
 you can set the default in the options page — useful if you always want to sync, or if you prefer to curate which notes make it to notion.
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## how to use each feature
 
@@ -198,9 +188,7 @@ you can set the default in the options page — useful if you always want to syn
 - resolved annotations are removed from your local view
 - if pinned to notion, they're marked "resolved" but preserved
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## development
 
@@ -238,9 +226,7 @@ src/
   options/                  — settings page
 ```
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## contributing
 
@@ -252,9 +238,7 @@ contributions welcome! this is a small passion project, so:
 4. build and test locally (`npm run build`, reload extension in chrome)
 5. open a pr
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## aesthetic
 
@@ -264,19 +248,17 @@ claudemot uses a y2k desktop-core aesthetic:
 - **style**: pixel-art icons, retro window chrome, glass morphism
 - everything lowercase, always
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
+---
 
 ## license
 
 [MIT](LICENSE)
 
-```
-·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
-```
-
 <div align="center">
+
+```
+˚ . ✦ · 💿 · ✦ . ˚
+```
 
 made with 💿 by [apolline](https://ko-fi.com/apollineproduction)
 
