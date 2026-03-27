@@ -54,7 +54,11 @@ export type MessageType =
   | 'OPEN_OPTIONS'
   | 'PIN_ANNOTATIONS'
   | 'EXPORT_SELECTED'
-  | 'CLEAR_ALL_DATA';
+  | 'CLEAR_ALL_DATA'
+  | 'SETUP_NOTION'
+  | 'SEARCH_NOTION_DATABASES'
+  | 'GET_ACCESSIBLE_PAGES'
+  | 'CREATE_NOTION_DATABASES';
 
 export interface SaveAnnotationPayload {
   chatId: string;
@@ -102,6 +106,22 @@ export interface NotionConfig {
   annotationsDbId: string;
   sessionsDsId: string;   // data source (collection) ID
   annotationsDsId: string; // data source (collection) ID
+}
+
+// --- Notion setup ---
+
+export interface NotionSetupResult {
+  sessionsDbId: string;
+  annotationsDbId: string;
+  sessionsDsId: string;
+  annotationsDsId: string;
+  parentPageTitle: string;
+}
+
+export interface NotionAccessiblePage {
+  id: string;
+  title: string;
+  icon?: string;
 }
 
 // --- Storage shape ---

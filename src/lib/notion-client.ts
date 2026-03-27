@@ -4,7 +4,7 @@
  * Includes request queue with rate limiting (350ms min between calls).
  */
 
-import type { Annotation, ChatSession, NotionConfig } from './types';
+import type { Annotation, ChatSession, NotionConfig, NotionSetupResult } from './types';
 import { exportForNotion } from './export';
 
 const NOTION_API = 'https://api.notion.com/v1';
@@ -46,6 +46,262 @@ async function notionFetch(config: NotionConfig, path: string, method: string, b
   }
 
   return res.json();
+}
+
+// --- Auto-setup: search, validate, create databases ---
+
+interface NotionSearchResult {
+  results: Array<{
+    id: string;
+    object: string;
+    title?: Array<{ plain_text: string }>;
+    properties?: Record<string, { type: string }>;
+    parent?: { type: string; page_id?: string };
+    icon?: { type: string; emoji?: string };
+  }>;
+}
+
+interface NotionDbResult {
+  id: string;
+  properties: Record<string, { type: string; id: string }>;
+}
+
+/**
+ * Validate an API key by calling /users/me.
+ */
+export async function validateApiKey(apiKey: string): Promise<string> {
+  const config: NotionConfig = {
+    apiKey,
+    sessionsDbId: '',
+    annotationsDbId: '',
+    sessionsDsId: '',
+    annotationsDsId: '',
+  };
+  const result = await notionFetch(config, '/users/me', 'GET') as {
+    name?: string;
+    bot?: { owner?: { user?: { name?: string } } };
+  };
+  return result.name ?? result.bot?.owner?.user?.name ?? 'Integration';
+}
+
+/**
+ * Search for existing Chat Sessions and Annotations databases.
+ * Returns their IDs if both are found with correct schemas.
+ */
+export async function searchForDatabases(
+  apiKey: string,
+): Promise<NotionSetupResult | null> {
+  const config: NotionConfig = {
+    apiKey,
+    sessionsDbId: '',
+    annotationsDbId: '',
+    sessionsDsId: '',
+    annotationsDsId: '',
+  };
+
+  const sessionsSearch = await notionFetch(config, '/search', 'POST', {
+    query: 'Chat Sessions',
+    filter: { value: 'database', property: 'object' },
+    page_size: 10,
+  }) as NotionSearchResult;
+
+  const annotationsSearch = await notionFetch(config, '/search', 'POST', {
+    query: 'Annotations',
+    filter: { value: 'database', property: 'object' },
+    page_size: 10,
+  }) as NotionSearchResult;
+
+  // Find databases with matching schemas
+  const sessionsDb = sessionsSearch.results.find(db =>
+    hasTitle(db, 'Chat Sessions') && hasRequiredProps(db, ['Chat ID', 'Chat URL', 'Project']),
+  );
+  const annotationsDb = annotationsSearch.results.find(db =>
+    hasTitle(db, 'Annotations') && hasRequiredProps(db, ['Highlight', 'Type', 'Note']),
+  );
+
+  if (!sessionsDb || !annotationsDb) return null;
+
+  const parentTitle = await getPageTitle(config, sessionsDb);
+
+  return {
+    sessionsDbId: sessionsDb.id,
+    annotationsDbId: annotationsDb.id,
+    sessionsDsId: '',
+    annotationsDsId: '',
+    parentPageTitle: parentTitle,
+  };
+}
+
+function hasTitle(db: NotionSearchResult['results'][0], title: string): boolean {
+  return db.title?.some(t => t.plain_text === title) ?? false;
+}
+
+function hasRequiredProps(
+  db: NotionSearchResult['results'][0],
+  props: string[],
+): boolean {
+  if (!db.properties) return false;
+  return props.every(p => p in db.properties!);
+}
+
+async function getPageTitle(
+  config: NotionConfig,
+  db: NotionSearchResult['results'][0],
+): Promise<string> {
+  if (db.parent?.type !== 'page_id' || !db.parent.page_id) return 'Unknown';
+  try {
+    const page = await notionFetch(config, `/pages/${db.parent.page_id}`, 'GET') as {
+      properties?: Record<string, { title?: Array<{ plain_text: string }> }>;
+    };
+    const titleProp = Object.values(page.properties ?? {}).find(p => p.title);
+    return titleProp?.title?.[0]?.plain_text ?? 'Untitled';
+  } catch {
+    return 'Unknown';
+  }
+}
+
+/**
+ * Get pages the integration can access (for parent selection).
+ */
+export async function getAccessiblePages(
+  apiKey: string,
+): Promise<Array<{ id: string; title: string; icon?: string }>> {
+  const config: NotionConfig = {
+    apiKey,
+    sessionsDbId: '',
+    annotationsDbId: '',
+    sessionsDsId: '',
+    annotationsDsId: '',
+  };
+
+  const result = await notionFetch(config, '/search', 'POST', {
+    filter: { value: 'page', property: 'object' },
+    page_size: 20,
+    sort: { direction: 'descending', timestamp: 'last_edited_time' },
+  }) as { results: Array<{
+    id: string;
+    parent?: { type: string };
+    properties?: Record<string, { type: string; title?: Array<{ plain_text: string }> }>;
+    icon?: { type: string; emoji?: string };
+  }> };
+
+  // Only show top-level pages (workspace or page parent, not database children)
+  return result.results
+    .filter(p => p.parent?.type !== 'database_id')
+    .map(page => {
+      const titleProp = Object.values(page.properties ?? {}).find(p => p.type === 'title');
+      const title = titleProp?.title?.[0]?.plain_text ?? 'Untitled';
+      const icon = page.icon?.type === 'emoji' ? page.icon.emoji : undefined;
+      return { id: page.id, title, icon };
+    });
+}
+
+/**
+ * Create both databases under a parent page.
+ */
+export async function createDatabases(
+  apiKey: string,
+  parentPageId: string,
+): Promise<NotionSetupResult> {
+  const config: NotionConfig = {
+    apiKey,
+    sessionsDbId: '',
+    annotationsDbId: '',
+    sessionsDsId: '',
+    annotationsDsId: '',
+  };
+
+  // Create Chat Sessions database
+  const sessionsDb = await notionFetch(config, '/databases', 'POST', {
+    parent: { type: 'page_id', page_id: parentPageId },
+    title: [{ type: 'text', text: { content: 'Chat Sessions' } }],
+    properties: {
+      'Session Title': { title: {} },
+      'Chat ID': { rich_text: {} },
+      'Chat URL': { url: {} },
+      'Project': {
+        select: {
+          options: [
+            { name: 'kyma', color: 'blue' },
+            { name: 'personal', color: 'green' },
+            { name: 'learning', color: 'purple' },
+            { name: 'other', color: 'gray' },
+          ],
+        },
+      },
+      'Status': {
+        select: {
+          options: [
+            { name: 'Active', color: 'green' },
+            { name: 'Archived', color: 'gray' },
+            { name: 'Reviewed', color: 'blue' },
+          ],
+        },
+      },
+    },
+  }) as NotionDbResult;
+
+  // Create Annotations database with relation to Sessions
+  const annotationsDb = await notionFetch(config, '/databases', 'POST', {
+    parent: { type: 'page_id', page_id: parentPageId },
+    title: [{ type: 'text', text: { content: 'Annotations' } }],
+    properties: {
+      'Highlight': { title: {} },
+      'Session': { relation: { database_id: sessionsDb.id, type: 'single_property' } },
+      'Type': {
+        select: {
+          options: [
+            { name: 'insight', color: 'purple' },
+            { name: 'question', color: 'blue' },
+            { name: 'action-item', color: 'red' },
+            { name: 'idea', color: 'pink' },
+            { name: 'reference', color: 'gray' },
+            { name: 'issue', color: 'orange' },
+            { name: 'pattern', color: 'yellow' },
+          ],
+        },
+      },
+      'Note': { rich_text: {} },
+      'Full Highlight': { rich_text: {} },
+      'Tags': { multi_select: { options: [] } },
+      'Source': {
+        select: {
+          options: [
+            { name: 'claude-response', color: 'purple' },
+            { name: 'user-message', color: 'blue' },
+            { name: 'artifact', color: 'green' },
+          ],
+        },
+      },
+      'Message Index': { number: {} },
+      'Status': {
+        select: {
+          options: [
+            { name: 'Active', color: 'green' },
+            { name: 'Resolved', color: 'gray' },
+          ],
+        },
+      },
+    },
+  }) as NotionDbResult;
+
+  // Get parent page title
+  let parentPageTitle = 'Claudemot';
+  try {
+    const page = await notionFetch(config, `/pages/${parentPageId}`, 'GET') as {
+      properties?: Record<string, { title?: Array<{ plain_text: string }> }>;
+    };
+    const titleProp = Object.values(page.properties ?? {}).find(p => p.title);
+    parentPageTitle = titleProp?.title?.[0]?.plain_text ?? 'Untitled';
+  } catch { /* use default */ }
+
+  return {
+    sessionsDbId: sessionsDb.id,
+    annotationsDbId: annotationsDb.id,
+    sessionsDsId: '',
+    annotationsDsId: '',
+    parentPageTitle,
+  };
 }
 
 /**

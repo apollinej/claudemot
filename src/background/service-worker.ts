@@ -30,7 +30,12 @@ import {
   createNotionAnnotation,
   resolveNotionAnnotation,
   scheduleBrotherPageRebuild,
+  validateApiKey,
+  searchForDatabases,
+  getAccessiblePages,
+  createDatabases,
 } from '../lib/notion-client';
+import { setNotionConfig } from '../lib/storage';
 
 // --- Message handler ---
 chrome.runtime.onMessage.addListener(
@@ -107,6 +112,20 @@ async function handleMessage(message: ExtensionMessage): Promise<ExtensionRespon
       await chrome.storage.local.remove('claudeAnnotator');
       return { success: true };
     }
+
+    case 'SETUP_NOTION':
+      return handleSetupNotion(message.payload as unknown as { apiKey: string });
+
+    case 'SEARCH_NOTION_DATABASES':
+      return handleSearchDatabases(message.payload as unknown as { apiKey: string });
+
+    case 'GET_ACCESSIBLE_PAGES':
+      return handleGetAccessiblePages(message.payload as unknown as { apiKey: string });
+
+    case 'CREATE_NOTION_DATABASES':
+      return handleCreateDatabases(
+        message.payload as unknown as { apiKey: string; parentPageId: string },
+      );
 
     default:
       return { success: false, error: `Unknown message type: ${message.type}` };
@@ -266,4 +285,102 @@ function generateSessionTitle(firstAnnotation: Annotation): string {
   const typeLabel = firstAnnotation.type.charAt(0).toUpperCase() + firstAnnotation.type.slice(1);
   const excerpt = firstAnnotation.highlightText.slice(0, 50);
   return `${typeLabel}: ${excerpt}${firstAnnotation.highlightText.length > 50 ? '...' : ''}`;
+}
+
+// --- Notion auto-setup handlers ---
+
+async function handleSetupNotion(
+  payload: { apiKey: string },
+): Promise<ExtensionResponse> {
+  try {
+    const name = await validateApiKey(payload.apiKey);
+
+    // Try to find existing databases
+    const existing = await searchForDatabases(payload.apiKey);
+    if (existing) {
+      await setNotionConfig({
+        apiKey: payload.apiKey,
+        sessionsDbId: existing.sessionsDbId,
+        annotationsDbId: existing.annotationsDbId,
+        sessionsDsId: existing.sessionsDsId,
+        annotationsDsId: existing.annotationsDsId,
+      });
+      return {
+        success: true,
+        data: {
+          status: 'connected',
+          integrationName: name,
+          ...existing,
+        },
+      };
+    }
+
+    // No existing databases — need user to pick a parent page
+    const pages = await getAccessiblePages(payload.apiKey);
+    if (pages.length === 0) {
+      return {
+        success: false,
+        error: 'No accessible pages found. Share a page with your integration first.',
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        status: 'needs_parent',
+        integrationName: name,
+        pages,
+      },
+    };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+async function handleSearchDatabases(
+  payload: { apiKey: string },
+): Promise<ExtensionResponse> {
+  try {
+    const result = await searchForDatabases(payload.apiKey);
+    return { success: true, data: result };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+async function handleGetAccessiblePages(
+  payload: { apiKey: string },
+): Promise<ExtensionResponse> {
+  try {
+    const pages = await getAccessiblePages(payload.apiKey);
+    return { success: true, data: pages };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+async function handleCreateDatabases(
+  payload: { apiKey: string; parentPageId: string },
+): Promise<ExtensionResponse> {
+  try {
+    const result = await createDatabases(payload.apiKey, payload.parentPageId);
+
+    await setNotionConfig({
+      apiKey: payload.apiKey,
+      sessionsDbId: result.sessionsDbId,
+      annotationsDbId: result.annotationsDbId,
+      sessionsDsId: result.sessionsDsId,
+      annotationsDsId: result.annotationsDsId,
+    });
+
+    return {
+      success: true,
+      data: {
+        status: 'connected',
+        ...result,
+      },
+    };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
 }

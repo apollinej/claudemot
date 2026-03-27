@@ -150,13 +150,6 @@
     }
     .hint a { color: var(--ca-accent); }
 
-    .prefilled {
-      color: var(--ca-text-muted);
-      font-style: italic;
-      font-family: var(--ca-body);
-      font-size: 11px;
-    }
-
     .toggle-row {
       display: flex;
       align-items: center;
@@ -213,6 +206,19 @@
     }
     .btn-secondary:hover { background: var(--ca-chrome-light); color: var(--ca-text); }
 
+    .btn-danger {
+      background: #fff0f0;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+    .btn-danger:hover { background: #fecaca; }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
     .message {
       padding: 8px 12px;
       margin-top: 12px;
@@ -234,6 +240,101 @@
       color: #dc2626;
       border-color: #fca5a5;
     }
+    .message.info {
+      display: block;
+      background: #f0f0ff;
+      color: var(--ca-accent);
+      border-color: var(--ca-iris-1);
+    }
+
+    /* --- Connected state --- */
+    .connected-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #f0fdf4;
+      border: 2px solid #86efac;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+    .connected-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .connected-status a {
+      color: var(--ca-accent);
+      text-decoration: none;
+    }
+    .connected-status a:hover { text-decoration: underline; }
+
+    .db-link {
+      display: block;
+      font-size: 12px;
+      color: var(--ca-text-muted);
+      margin-top: 4px;
+    }
+    .db-link a { color: var(--ca-accent); }
+
+    /* --- Page picker --- */
+    .page-picker {
+      display: none;
+      margin-top: 12px;
+    }
+    .page-picker.visible { display: block; }
+
+    .page-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 2px solid var(--ca-chrome-mid);
+      background: #fff;
+    }
+    .page-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: var(--ca-body);
+      border-bottom: 1px solid var(--ca-chrome-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .page-item:hover { background: #f5f3ff; }
+    .page-item:last-child { border-bottom: none; }
+    .page-item .page-icon { font-size: 16px; }
+    .page-item .page-title { flex: 1; }
+
+    /* --- Spinner --- */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--ca-chrome-mid);
+      border-top-color: var(--ca-accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* --- Advanced toggle --- */
+    .advanced-toggle {
+      font-family: var(--ca-pixel);
+      font-size: 10px;
+      color: var(--ca-text-muted);
+      cursor: pointer;
+      margin-top: 12px;
+      letter-spacing: 0.3px;
+    }
+    .advanced-toggle:hover { color: var(--ca-accent); }
+    .advanced-fields { display: none; margin-top: 12px; }
+    .advanced-fields.visible { display: block; }
+
+    [hidden] { display: none !important; }
   </style>
 </head>
 <body>
@@ -248,35 +349,75 @@
     </div>
     <div class="settings-body">
 
+      <!-- Notion Integration Section -->
       <div class="section">
         <h2>Notion Integration</h2>
-        <div class="field">
-          <label>API Key (Internal Integration Token)</label>
-          <input type="password" id="apiKey" placeholder="ntn_..." />
-          <p class="hint">Create at <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a></p>
+
+        <!-- Connected state -->
+        <div id="connectedState" hidden>
+          <div class="connected-status">
+            <span class="connected-dot"></span>
+            <span>connected to notion as <strong id="integrationName"></strong></span>
+          </div>
+          <span class="db-link" id="dbLinks"></span>
+          <div class="btn-row" style="margin-top: 8px;">
+            <button class="btn btn-danger" id="disconnect">Disconnect</button>
+          </div>
         </div>
-        <div class="field">
-          <label>Sessions Database ID <span class="prefilled">(pre-configured)</span></label>
-          <input type="text" id="sessionsDbId" placeholder="Database ID" />
+
+        <!-- Disconnected state: API key entry -->
+        <div id="disconnectedState">
+          <div class="field">
+            <label>api key</label>
+            <input type="password" id="apiKey" placeholder="ntn_..." />
+            <p class="hint">
+              1. create at <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a><br>
+              2. share a notion page with your integration<br>
+              3. paste the key here and click connect
+            </p>
+          </div>
+          <button class="btn btn-save" id="connect">Connect</button>
         </div>
-        <div class="field">
-          <label>Annotations Database ID <span class="prefilled">(pre-configured)</span></label>
-          <input type="text" id="annotationsDbId" placeholder="Database ID" />
+
+        <!-- Page picker (shown when no existing databases found) -->
+        <div class="page-picker" id="pagePicker">
+          <p class="hint" style="margin-bottom: 8px;">
+            no existing databases found. pick a page to create them under:
+          </p>
+          <div class="page-list" id="pageList"></div>
         </div>
-        <div class="field">
-          <label>Sessions Data Source ID <span class="prefilled">(pre-configured)</span></label>
-          <input type="text" id="sessionsDsId" placeholder="Collection ID" />
-        </div>
-        <div class="field">
-          <label>Annotations Data Source ID <span class="prefilled">(pre-configured)</span></label>
-          <input type="text" id="annotationsDsId" placeholder="Collection ID" />
+
+        <!-- Status messages -->
+        <div class="message" id="notionMessage"></div>
+
+        <!-- Advanced: manual ID entry -->
+        <div class="advanced-toggle" id="advancedToggle">&#9654; advanced (manual ids)</div>
+        <div class="advanced-fields" id="advancedFields">
+          <div class="field">
+            <label>sessions database id</label>
+            <input type="text" id="sessionsDbId" placeholder="Database ID" />
+          </div>
+          <div class="field">
+            <label>annotations database id</label>
+            <input type="text" id="annotationsDbId" placeholder="Database ID" />
+          </div>
+          <div class="field">
+            <label>sessions data source id</label>
+            <input type="text" id="sessionsDsId" placeholder="Collection ID" />
+          </div>
+          <div class="field">
+            <label>annotations data source id</label>
+            <input type="text" id="annotationsDsId" placeholder="Collection ID" />
+          </div>
+          <button class="btn btn-secondary" id="saveManual">Save Manual IDs</button>
         </div>
       </div>
 
+      <!-- Defaults Section -->
       <div class="section">
         <h2>Defaults</h2>
         <div class="field">
-          <label>Default Project</label>
+          <label>default project</label>
           <select id="defaultProject">
             <option value="kyma">kyma</option>
             <option value="personal" selected>personal</option>
@@ -287,17 +428,15 @@
         <div class="toggle-row">
           <label>
             <input type="checkbox" class="toggle-checkbox" id="defaultAutoPin" />
-            Automatically pin new annotations to Notion
+            automatically pin new annotations to notion
           </label>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-save" id="saveDefaults">Save Defaults</button>
         </div>
       </div>
 
-      <div class="btn-row">
-        <button class="btn btn-save" id="save">Save Settings</button>
-        <button class="btn btn-secondary" id="test">Test Connection</button>
-      </div>
-
-      <div class="message" id="message"></div>
+      <div class="message" id="defaultsMessage"></div>
     </div>
   </div>
 
