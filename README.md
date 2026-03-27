@@ -44,11 +44,9 @@ hold **Option** and **select any text** in a claude conversation → a cute pixe
 
 at the end of a session, export all your annotations as structured markdown you can paste into a new claude chat, or sync them to notion.
 
-<
 ![annotation popup](screenshots/popup.png)
 ![margin notes](screenshots/rail.png)
 ![sidebar](screenshots/sidebar.png)
->
 
 ---
 
