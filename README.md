@@ -74,7 +74,7 @@ google docs-style sticky notes appear on the right side of the chat. click a hig
 press `cmd+shift+s` (or click the floating button at the bottom-right) to open the full annotation sidebar. see all your notes for the current chat, multi-select to pin or export, and click any annotation to scroll to its highlight.
 
 ### export to clipboard
-exports your annotations as structured markdown organized by type — ready to paste into a new claude chat. the format looks like:
+exports your annotations as structured markdown organized by type — ready to paste into a reply or a new chat. the auto format looks like:
 
 ```
 here are my thoughts from this session:
