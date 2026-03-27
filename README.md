@@ -44,12 +44,12 @@ hold **Option** and select any text in a claude conversation → a cute pixel-ar
 
 at the end of a session, export all your annotations as structured markdown you can paste into a new claude chat, or sync them to notion.
 
-<!--
+<!
 screenshots go here — add images to a screenshots/ folder and reference like:
 ![annotation popup](screenshots/popup.png)
 ![margin notes](screenshots/rail.png)
 ![sidebar](screenshots/sidebar.png)
--->
+>
 
 ---
 
