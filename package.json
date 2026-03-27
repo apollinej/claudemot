@@ -1,0 +1,16 @@
+{
+  "name": "claudemot",
+  "version": "0.1.0",
+  "description": "Claudemot — Annotate Claude.ai conversations and sync to Notion",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build",
+    "build": "tsc --noEmit && vite build && vite build --config vite.config.content.ts && vite build --config vite.config.sw.ts && rm -rf claude-annotator/dist && cp -R dist claude-annotator/dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0"
+  }
+}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ca-accent: #8b5cf6;
+      --ca-accent-soft: #a78bfa;
+      --ca-iris-1: #c4b5fd;
+      --ca-iris-2: #a5b4fc;
+      --ca-chrome-mid: #b8b8c8;
+      --ca-chrome-dark: #8888a0;
+      --ca-chrome-grad: linear-gradient(135deg, #d4d4e0, #c4b5fd, #a5b4fc, #d8b4fe, #e8e8f0);
+      --ca-titlebar: linear-gradient(90deg, #a5b4fc, #c4b5fd, #d8b4fe, #93c5fd);
+      --ca-glass-strong: rgba(245, 245, 252, 0.96);
+      --ca-text: #2d2d3d;
+      --ca-text-mid: #555570;
+      --ca-text-muted: #8888a0;
+      --ca-pixel: 'Press Start 2P', monospace;
+      --ca-body: 'Orbitron', sans-serif;
+      --ca-pixel-border:
+        inset -2px -2px 0 0 #9898b0,
+        inset 2px 2px 0 0 #f0f0f8,
+        inset -4px -4px 0 0 #7878a0,
+        inset 4px 4px 0 0 #fafaff;
+      --ca-shadow: 0 4px 24px rgba(100, 100, 160, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 320px;
+      font-family: var(--ca-body);
+      background: var(--ca-chrome-grad);
+      color: var(--ca-text);
+      font-size: 14px;
+    }
+
+    .popup-window {
+      background: var(--ca-glass-strong);
+      border: 3px solid var(--ca-accent-soft);
+      box-shadow: var(--ca-pixel-border), var(--ca-shadow);
+      overflow: hidden;
+    }
+
+    .popup-titlebar {
+      background: var(--ca-titlebar);
+      background-size: 200% 100%;
+      animation: ca-shimmer 6s ease-in-out infinite;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--ca-chrome-dark);
+    }
+
+    @keyframes ca-shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .popup-titlebar h1 {
+      font-family: var(--ca-pixel);
+      font-size: 11px;
+      color: #fff;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+      letter-spacing: 0.5px;
+    }
+
+    .popup-titlebar-dots {
+      display: flex;
+      gap: 4px;
+    }
+    .popup-titlebar-dots span {
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid rgba(0,0,0,0.15);
+    }
+    .dot-close { background: #ff6b6b; }
+    .dot-min { background: #ffd93d; }
+    .dot-max { background: #6bff6b; }
+
+    .popup-body {
+      padding: 16px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 2px solid var(--ca-chrome-mid);
+      margin-bottom: 12px;
+      box-shadow: 2px 2px 0 0 rgba(180, 180, 200, 0.2);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4caf50;
+      flex-shrink: 0;
+    }
+    .status-dot.disconnected { background: #f44336; }
+    .status-dot.no-config { background: #ff9800; }
+    .status-text {
+      font-family: var(--ca-body);
+      font-size: 14px;
+      color: var(--ca-text-mid);
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .stat {
+      flex: 1;
+      text-align: center;
+      background: #fff;
+      border: 2px solid var(--ca-chrome-mid);
+      padding: 10px 8px;
+      box-shadow: 2px 2px 0 0 rgba(180, 180, 200, 0.2);
+    }
+    .stat-value {
+      font-family: var(--ca-pixel);
+      font-size: 14px;
+      color: var(--ca-accent);
+    }
+    .stat-label {
+      font-family: var(--ca-body);
+      font-size: 13px;
+      color: var(--ca-text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .actions { display: flex; flex-direction: column; gap: 6px; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 9px 14px;
+      font-family: var(--ca-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid var(--ca-chrome-mid);
+      background: #fff;
+      color: var(--ca-text);
+      text-align: left;
+      transition: all 0.1s;
+      letter-spacing: 0.3px;
+      box-shadow: 2px 2px 0 0 rgba(180, 180, 200, 0.2);
+    }
+    .btn:hover {
+      border-color: var(--ca-accent-soft);
+      transform: translateY(-1px);
+      box-shadow: 3px 3px 0 0 rgba(180, 180, 200, 0.3);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, var(--ca-iris-2), var(--ca-accent));
+      color: #fff;
+      border-color: #6d5ab5;
+      box-shadow: 0 2px 0 0 #5a48a0;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 0 0 #5a48a0;
+    }
+
+    .shortcut {
+      float: right;
+      font-family: var(--ca-pixel);
+      font-size: 12px;
+      color: var(--ca-text-muted);
+      opacity: 0.7;
+    }
+    .btn-primary .shortcut { color: rgba(255,255,255,0.7); }
+  </style>
+</head>
+<body>
+  <div class="popup-window">
+    <div class="popup-titlebar">
+      <h1>claudemot</h1>
+      <div class="popup-titlebar-dots">
+        <span class="dot-min"></span>
+        <span class="dot-max"></span>
+        <span class="dot-close"></span>
+      </div>
+    </div>
+
+    <div class="popup-body">
+      <div class="status" id="status">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Checking...</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value" id="sessionCount">-</div>
+          <div class="stat-label">Sessions</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="annotationCount">-</div>
+          <div class="stat-label">Annotations</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="toggleSidebar">
+          Toggle Sidebar
+          <span class="shortcut">&#8984;&#8679;S</span>
+        </button>
+        <button class="btn btn-primary" id="exportSession">
+          Export Current Session
+        </button>
+        <button class="btn" id="openOptions">
+          Settings
+        </button>
+        <button class="btn" id="clearData" style="color: var(--ca-text-muted); font-size: 13px; margin-top: 4px;">
+          clear all data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
