@@ -12,15 +12,15 @@
 
 # claudemot
 
-> annotate your claude chats like a textbook. highlight text, pin margin notes, export your thinking.
+> annotate your claude chats like a book. highlight text, write margin notes, bookmark your thinking.
 
-every claude conversation gets a "twin" — a structured collection of your reactions, questions, and insights that you can bring back into future conversations. it's like scribbling in the margins of a really good book, except the book talks back.
+every claude conversation gets a structured collection of your reactions, questions, and insights that you can bring back into future conversations or use to index your chats.
 
-[![ko-fi](https://img.shields.io/badge/support-ko--fi-ff5e5b?style=flat-square&logo=ko-fi&logoColor=white)](https://ko-fi.com/apollineproduction)
 [![license](https://img.shields.io/badge/license-MIT-a78bfa?style=flat-square)](LICENSE)
-[![chrome](https://img.shields.io/badge/chrome-extension-c4b5fd?style=flat-square&logo=googlechrome&logoColor=white)]()
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## developer note
 
@@ -30,11 +30,15 @@ every claude conversation gets a "twin" — a structured collection of your reac
 
 **the motivation:** our everyday tools should spark delight and have some whimsy
 
-**the name:** «mot» means "word" in french to ref words-driven purpose, but pronounced like infamous "clawd-bot"
+**the name:** «mot» means "word" in french to ref words-driven purpose, but pronounced like infamous "clawdbot"
 
-**the moment:** first code project and open-source project — expectations low, feedback welcome
+**the moment:** my first code project and open-source project — expectations low, feedback welcome
 
----
+☕ [buy me a coffee](https://ko-fi.com/apollineproduction)
+
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## what it does
 
@@ -42,7 +46,16 @@ hold **Option** and select any text in a claude conversation → a cute pixel-ar
 
 at the end of a session, export all your annotations as structured markdown you can paste into a new claude chat, or sync them to notion.
 
----
+<!--
+screenshots go here — add images to a screenshots/ folder and reference like:
+![annotation popup](screenshots/popup.png)
+![margin notes](screenshots/rail.png)
+![sidebar](screenshots/sidebar.png)
+-->
+
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## features
 
@@ -50,7 +63,6 @@ at the end of a session, export all your annotations as structured markdown you 
 hold **Option** (Alt on Windows) and select text on any claude.ai chat page. a draggable popup window (annotate.exe) appears where you can pick a type, write a note, and add tags. normal text selection (without Option) works as usual for copy/paste.
 
 ### 7 annotation types
-each has a custom pixel-art icon:
 
 | icon | type | use it for... |
 |------|------|---------------|
@@ -87,7 +99,9 @@ when you're done with an annotation, resolve it. it disappears from your local v
 ### tags
 add freeform tags to any annotation. recent tags are suggested when you create new annotations.
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## install (chrome)
 
@@ -111,7 +125,9 @@ add freeform tags to any annotation. recent tags are suggested when you create n
 
 4. navigate to any `claude.ai/chat/*` page — the extension activates automatically
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## settings
 
@@ -146,7 +162,9 @@ in the annotation popup, there's a toggle for "pin to notion". when turned on, e
 
 you can set the default in the options page — useful if you always want to sync, or if you prefer to curate which notes make it to notion.
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## how to use each feature
 
@@ -180,7 +198,9 @@ you can set the default in the options page — useful if you always want to syn
 - resolved annotations are removed from your local view
 - if pinned to notion, they're marked "resolved" but preserved
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## development
 
@@ -218,7 +238,9 @@ src/
   options/                  — settings page
 ```
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## contributing
 
@@ -230,7 +252,9 @@ contributions welcome! this is a small passion project, so:
 4. build and test locally (`npm run build`, reload extension in chrome)
 5. open a pr
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## aesthetic
 
@@ -240,18 +264,22 @@ claudemot uses a y2k desktop-core aesthetic:
 - **style**: pixel-art icons, retro window chrome, glass morphism
 - everything lowercase, always
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 ## license
 
 [MIT](LICENSE)
 
----
+```
+·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
+```
 
 <div align="center">
 
 made with 💿 by [apolline](https://ko-fi.com/apollineproduction)
 
-*every claude chat deserves a twin*
+*every routine tool needs a little whimsy*
 
 </div>
