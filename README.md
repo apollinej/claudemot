@@ -17,6 +17,7 @@
 every claude conversation gets a structured collection of your reactions, questions, and insights that you can bring back into future conversations or use to index your chats.
 
 [![license](https://img.shields.io/badge/license-MIT-a78bfa?style=flat-square)](LICENSE)
+[![chrome web store](https://img.shields.io/chrome-web-store/v/bmhldpmjhcfjmklbnbjfcnldoingjobl?style=flat-square&label=chrome+web+store&color=a78bfa)](https://chromewebstore.google.com/detail/claudemot/bmhldpmjhcfjmklbnbjfcnldoingjobl)
 
 
 ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
