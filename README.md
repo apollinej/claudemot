@@ -19,6 +19,8 @@ every claude conversation gets a structured collection of your reactions, questi
 [![license](https://img.shields.io/badge/license-MIT-a78bfa?style=flat-square)](LICENSE)
 [![chrome web store](https://img.shields.io/chrome-web-store/v/bmhldpmjhcfjmklbnbjfcnldoingjobl?style=flat-square&label=chrome+web+store&color=a78bfa)](https://chromewebstore.google.com/detail/claudemot/bmhldpmjhcfjmklbnbjfcnldoingjobl)
 
+![margin notes](screenshots/rail.png)
+
 
 ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .  ·  ˚  ✦  .
 
@@ -44,6 +46,9 @@ every claude conversation gets a structured collection of your reactions, questi
 hold **Option** and **select any text** in a claude conversation → a cute pixel-art popup appears → pick an annotation type, add your note → it stays pinned to that text as a highlighted overlay with a sticky note in the margin.
 
 at the end of a session, export all your annotations as structured markdown you can paste into a new claude chat, or sync them to notion.
+
+![annotation popup](screenshots/popup.png)
+![sidebar](screenshots/sidebar.png)
 
 ---
 
